@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CalMeasure</string>
+    <string name="title_activity_info_show">Calorie</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="weight_fragment_main">WEIGHT</string>
+    <string name="height_fragment_main">HEIGHT</string>
+    <string name="walking_speed_fragment_main">WALKING SPEED</string>
+    <string name="calorie_consumption_fragment_main">CALORIE CONSUMPTION</string>
+    <string name="start_fragment_main">START</string>
+    <string name="reset_fragment_main">RESET</string>
+</resources>

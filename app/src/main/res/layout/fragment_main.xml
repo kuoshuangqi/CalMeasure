@@ -1,0 +1,219 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="itu.edu.embeddedlab.calmeasure.MainFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="#7FFFD4"
+            android:layout_weight="1"
+            android:layout_height="0dp">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:src="@drawable/headicon"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginLeft="25dp"
+                android:layout_weight="4.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="2"
+                    android:layout_height="0dp">
+                    <TextView
+                        android:id="@+id/fragment_main_title"
+                        android:text="Kevin"
+                        android:textSize="40sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <TextView
+                        android:id="@+id/fragment_main_weight_label"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/weight_fragment_main"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_toRightOf="@id/fragment_main_weight_label"
+                        android:layout_marginLeft="5dp"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/main_fragment_weight"
+                        android:layout_width="wrap_content"
+                        android:textSize="12sp"
+                        android:text="133 BLS"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="15dp"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/fragment_main_height"
+                        android:layout_width="wrap_content"
+                        android:textSize="12sp"
+                        android:text="5'9'"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_toLeftOf="@id/fragment_main_height"
+                        android:layout_marginRight="5dp"
+                        android:layout_centerVertical="true"
+                        android:layout_width="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/height_fragment_main"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp">
+            <LinearLayout
+                android:id="@+id/fragment_main_clothes_less"
+                android:background="@drawable/circle_corner_shape"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:src="@drawable/clothes1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_main_clothes_medium"
+                android:background="@drawable/circle_corner_shape"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/clothes2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_main_clothes_more"
+                android:background="@drawable/circle_corner_shape"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/clothes3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="4"
+            android:orientation="horizontal"
+            android:layout_height="0dp">
+            <com.google.android.gms.maps.MapView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/fragment_main_mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_weight="1.5"
+            android:layout_height="0dp">
+            <RelativeLayout
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp">
+                <TextView
+                    android:text="@string/walking_speed_fragment_main"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text = "0 KM/HR"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp">
+                <TextView
+                    android:text="@string/calorie_consumption_fragment_main"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:text = "1000 CAL"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_weight="2"
+                android:layout_height="0dp">
+                <RelativeLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                    <Button
+                        android:background="@drawable/circle_corner_shape"
+                        android:id="@+id/fragment_main_start_button"
+                        android:text="@string/start_fragment_main"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                    <Button
+                        android:background="@drawable/circle_corner_shape"
+                        android:id="@+id/fragment_main_reset_button"
+                        android:text="@string/reset_fragment_main"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>
