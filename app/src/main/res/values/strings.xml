@@ -11,4 +11,11 @@
     <string name="calorie_consumption_fragment_main">CALORIE CONSUMPTION</string>
     <string name="start_fragment_main">START</string>
     <string name="reset_fragment_main">RESET</string>
+    <string name="stop_fragment_main">STOP</string>
+    <string name="calories_fragemtn_main">CALORIES</string>
+    <string name="mh_fragment_main">M/H</string>
+    <string name="mile_fragment_main">MILE</string>
+    <string name="bpm_fragment_main">BPM</string>
+    <string name="ozhr_fragment_main">OZ/HR</string>
+    <string name="c_fragment_main">C</string>
 </resources>

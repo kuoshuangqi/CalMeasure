@@ -13,22 +13,24 @@
         android:layout_marginBottom="55dp"
         android:layout_height="match_parent">
     </FrameLayout>
-    
+
     <LinearLayout
+        android:id="@+id/main_activity_navigate"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:orientation="horizontal"
-        android:layout_height="50dp">
+        android:layout_height="42dp">
         <RelativeLayout
             android:id="@+id/main_activity_navigate_main_fragment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:onClick="onClickNavigateMain"
             >
             <ImageView
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_airplay_black_24dp"
+                android:src="@drawable/navigate_main_fragment_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
@@ -36,12 +38,13 @@
             android:id="@+id/main_activity_navigate_second_fragment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:onClick="onClickNavigateSecond"
             >
             <ImageView
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_build_black_24dp"
+                android:src="@drawable/navigate_presentation_fragment_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
@@ -49,12 +52,13 @@
             android:id="@+id/main_activity_navigate_third_fragment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:onClick="onClickNavigateThird"
             >
             <ImageView
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_equalizer_black_24dp"
+                android:src="@drawable/navigate_medal_fragment_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
@@ -62,15 +66,25 @@
             android:id="@+id/main_activity_navigate_fouth_fragment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="3dp"
             android:layout_weight="1"
             android:onClick="onClickNavigateFouth"
             >
             <ImageView
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_thumb_up_black_24dp"
+                android:src="@drawable/navigate_settings_fragment_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_above="@id/main_activity_navigate"
+        android:background="#000000"
+        android:layout_marginBottom="2dp"
+        android:layout_height="3dp">
 
     </LinearLayout>
 </RelativeLayout>

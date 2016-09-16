@@ -1,12 +1,14 @@
 package itu.edu.embeddedlab.calmeasure;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,6 +39,8 @@ public class MainFragment extends Fragment{
     private String mParam2;
     private GoogleMap mgoogleMap;
     private MapView mMapView;
+    private ImageView speedImageView;
+    private AnimationDrawable speedAnimationDrawble;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,6 +92,22 @@ public class MainFragment extends Fragment{
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mgoogleMap = googleMap;
+            }
+        });
+
+        //set animation
+        speedImageView = (ImageView)v.findViewById(R.id.main_fragment_speed_icon);
+        speedImageView.setBackgroundColor(0xFFFFFF);
+        speedImageView.setBackgroundResource(R.drawable.main_fragment_running_animation);
+        speedAnimationDrawble = (AnimationDrawable)speedImageView.getBackground();
+        speedImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(speedAnimationDrawble.isRunning()){
+                    speedAnimationDrawble.stop();
+                }else{
+                    speedAnimationDrawble.start();
+                }
             }
         });
         return v;

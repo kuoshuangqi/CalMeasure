@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener, MedalsFragment.OnFragmentInteractionListener,
-    SettingFragment.OnFragmentInteractionListener, StatusFragment.OnFragmentInteractionListener{
+    SettingFragment.OnFragmentInteractionListener, PresentationFragment.OnFragmentInteractionListener{
 
     private List<Fragment> fragmentColection;
     private Fragment currentFragment;
@@ -29,10 +29,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 
     private void initFragment(){
         fragmentColection = new ArrayList<Fragment>();
-        fragmentColection.add(new MainFragment());
-        fragmentColection.add(new MedalsFragment());
-        fragmentColection.add(new StatusFragment());
-        fragmentColection.add(new SettingFragment());
+        fragmentColection.add(MainFragment.newInstance("", ""));
+        fragmentColection.add(MedalsFragment.newInstance("", ""));
+        fragmentColection.add(PresentationFragment.newInstance("", ""));
+        fragmentColection.add(SettingFragment.newInstance("", ""));
         onClickNavigateMain(null);
     }
 
