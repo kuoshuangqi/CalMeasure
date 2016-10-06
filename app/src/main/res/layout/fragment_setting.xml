@@ -4,10 +4,35 @@
     android:layout_height="match_parent"
     tools:context="itu.edu.embeddedlab.calmeasure.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="setting fragment" />
+        android:layout_height="match_parent">
 
+        <TextView
+            android:textSize="25sp"
+            android:id="@+id/text_current_device_fragment_setting"
+            android:text="null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/button_scan_for_device_fragment_setting"
+            android:layout_below="@id/text_current_device_fragment_setting"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/scan_device_fragment_setting"
+            android:clickable="true"
+            />
+
+        <ListView
+            android:layout_below="@id/button_scan_for_device_fragment_setting"
+            android:id="@+id/device_list_fragment_setting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="0dp"
+            android:paddingTop="5dp"
+            android:scrollbarStyle="outsideOverlay"
+            tools:listitem="@layout/device_list_row_fragment_setting"/>
+    </RelativeLayout>
 </FrameLayout>

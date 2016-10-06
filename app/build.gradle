@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "itu.edu.embeddedlab.calmeasure"
-        minSdkVersion 15
+        minSdkVersion 18
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -27,4 +27,8 @@ dependencies {
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.android.support:design:24.1.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'no.nordicsemi.android.support.v18:scanner:0.2.0'
+    compile 'no.nordicsemi.android:log:2.0.0'
+    compile 'com.amazonaws:aws-android-sdk-iot:2.2.+'
+    compile 'commons-codec:commons-codec:1.3'
 }

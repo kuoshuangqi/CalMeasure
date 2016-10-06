@@ -1,10 +1,19 @@
 package itu.edu.embeddedlab.calmeasure;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +24,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import android.Manifest;
+import android.widget.TextView;
 
 
 /**
@@ -28,11 +39,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment{
+public class MainFragment extends Fragment implements LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = MainFragment.class.getSimpleName();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -41,6 +53,10 @@ public class MainFragment extends Fragment{
     private MapView mMapView;
     private ImageView speedImageView;
     private AnimationDrawable speedAnimationDrawble;
+    private LocationManager locationManager;
+    private int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private TextView humidityTextView;
+    private TextView temperatureTextView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,7 +96,7 @@ public class MainFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_main, container, false);
-        mMapView = (MapView)v.findViewById(R.id.fragment_main_mapView);
+        mMapView = (MapView) v.findViewById(R.id.fragment_main_mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();// needed to get the map to display immediately
         try {
@@ -92,25 +108,81 @@ public class MainFragment extends Fragment{
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mgoogleMap = googleMap;
+                mgoogleMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker").snippet("snippet"));
+                enableLocation();
+
+//                mgoogleMapsetOnMyLocationChangeListener.();
             }
         });
 
+
         //set animation
-        speedImageView = (ImageView)v.findViewById(R.id.main_fragment_speed_icon);
+        speedImageView = (ImageView) v.findViewById(R.id.main_fragment_speed_icon);
         speedImageView.setBackgroundColor(0xFFFFFF);
         speedImageView.setBackgroundResource(R.drawable.main_fragment_running_animation);
-        speedAnimationDrawble = (AnimationDrawable)speedImageView.getBackground();
+        speedAnimationDrawble = (AnimationDrawable) speedImageView.getBackground();
         speedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(speedAnimationDrawble.isRunning()){
+                if (speedAnimationDrawble.isRunning()) {
                     speedAnimationDrawble.stop();
-                }else{
+                } else {
                     speedAnimationDrawble.start();
                 }
             }
         });
+
+        //textview to be updated
+        humidityTextView = (TextView)v.findViewById(R.id.main_fragment_humidity_text);
+        temperatureTextView = (TextView)v.findViewById(R.id.main_fragment_temperature_text);
         return v;
+    }
+
+    private void enableLocation() {
+        //set location
+        //provide permission
+        if (ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
+            mgoogleMap.setMyLocationEnabled(true);
+            locationManager = (LocationManager) MainFragment.this.getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            String provider = locationManager.getBestProvider(criteria, true);
+            Log.e(TAG, "we are ready to request update");
+            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 0, 0, this);
+//            Location myLocation = locationManager.getLastKnownLocation((provider));
+//            mgoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//            double latitude = myLocation.getLatitude();
+//            double longtitude = myLocation.getLongitude();
+//            LatLng latLng = new LatLng(latitude, longtitude);
+//            mgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//            mgoogleMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+//            mgoogleMap.addMarker((new MarkerOptions().position(new LatLng(latitude, longtitude)).title("you are here").snippet("consider yourself")));
+        } else {
+            ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        boolean isCOARSEPer = false;
+        boolean isFINEPer = false;
+        for (int i = 0; i < permissions.length; i++) {
+            if (Manifest.permission.ACCESS_COARSE_LOCATION.equals(permissions[i])) {
+                isCOARSEPer = true;
+            }
+            if(Manifest.permission.ACCESS_FINE_LOCATION.equals(permissions[i])){
+                isFINEPer = true;
+            }
+        }
+        if(isCOARSEPer && isFINEPer){
+            enableLocation();
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -137,6 +209,47 @@ public class MainFragment extends Fragment{
         mListener = null;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+//        Log.e(MainFragment.this.getClass().getSimpleName(), "we have received location changed");
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+//            Log.e(TAG, "permissioned");
+//            locationManager.removeUpdates(this);
+            mgoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            double latitude = location.getLatitude();
+            double longtitude = location.getLongitude();
+            LatLng latLng = new LatLng(latitude, longtitude);
+            mgoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mgoogleMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            mgoogleMap.clear();
+            mgoogleMap.addMarker((new MarkerOptions().position(new LatLng(latitude, longtitude)).title("you are here").snippet("consider yourself")));
+            return;
+        }
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -150,5 +263,13 @@ public class MainFragment extends Fragment{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void updateTemperature(String number){
+        temperatureTextView.setText(number);
+    }
+
+    public void updateHumidity(String number){
+        humidityTextView.setText(number);
     }
 }

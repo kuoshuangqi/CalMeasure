@@ -18,4 +18,5 @@
     <string name="bpm_fragment_main">BPM</string>
     <string name="ozhr_fragment_main">OZ/HR</string>
     <string name="c_fragment_main">C</string>
+    <string name="scan_device_fragment_setting">ScanForDevice</string>
 </resources>
