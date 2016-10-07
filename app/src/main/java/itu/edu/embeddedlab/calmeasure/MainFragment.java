@@ -120,17 +120,6 @@ public class MainFragment extends Fragment implements LocationListener {
         speedImageView = (ImageView) v.findViewById(R.id.main_fragment_speed_icon);
         speedImageView.setBackgroundColor(0xFFFFFF);
         speedImageView.setBackgroundResource(R.drawable.main_fragment_running_animation);
-        speedAnimationDrawble = (AnimationDrawable) speedImageView.getBackground();
-        speedImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (speedAnimationDrawble.isRunning()) {
-                    speedAnimationDrawble.stop();
-                } else {
-                    speedAnimationDrawble.start();
-                }
-            }
-        });
 
         //textview to be updated
         humidityTextView = (TextView)v.findViewById(R.id.main_fragment_humidity_text);
@@ -271,5 +260,24 @@ public class MainFragment extends Fragment implements LocationListener {
 
     public void updateHumidity(String number){
         humidityTextView.setText(number);
+    }
+
+    public void updateGeasture(String status){
+        if(status.equals("sitting")){
+            if(speedAnimationDrawble != null)
+                speedAnimationDrawble.stop();
+            speedImageView.setBackgroundColor(0xFFFFFF);
+            speedImageView.setBackgroundResource(R.drawable.main_fragment_sitting);
+        }else if(status.equals("walking")){
+            speedImageView.setBackgroundColor(0xFFFFFF);
+            speedImageView.setBackgroundResource(R.drawable.main_fragment_walking_animation);
+            speedAnimationDrawble = (AnimationDrawable) speedImageView.getBackground();
+            speedAnimationDrawble.start();
+        }else if(status.equals("running")){
+            speedImageView.setBackgroundColor(0xFFFFFF);
+            speedImageView.setBackgroundResource(R.drawable.main_fragment_running_animation);
+            speedAnimationDrawble = (AnimationDrawable) speedImageView.getBackground();
+            speedAnimationDrawble.start();
+        }
     }
 }

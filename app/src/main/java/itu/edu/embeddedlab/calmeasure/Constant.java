@@ -13,4 +13,5 @@ public class Constant {
     public static final String BROADCAST_BLE_DISCONNECT = "itu.edu.embeddedlab.calmeasure.BLE_DISCONNECT";
     public static final String BROADCAST_AWS_TEMPERATURE = "itu.edu.embeddedlab.calmeasure.UPDATE_TEMPERATRUE";
     public static final String BROADCAST_AWS_HUMIDITY = "itu.edu.embeddedlab.calmeasure.UPDATE_HUMIDITY";
+    public static final String BROADCAST_AWS_GUESTRUE = "itu.edu.embeddedlab.calmeasure.gesutrue";
 }

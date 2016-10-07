@@ -100,11 +100,15 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
             }else if(bundle.containsKey(Constant.BROADCAST_AWS_HUMIDITY)){
                 String number = bundle.getString(Constant.BROADCAST_AWS_HUMIDITY);
                 ((MainFragment)fragmentColection.get(0)).updateHumidity(number);
-                Log.e(TAG, "humidity is " + number);
+//                Log.e(TAG, "humidity is " + number);
             }else if(bundle.containsKey(Constant.BROADCAST_AWS_TEMPERATURE)){
                 String number = bundle.getString(Constant.BROADCAST_AWS_TEMPERATURE);
                 ((MainFragment)fragmentColection.get(0)).updateTemperature(number);
-                Log.e(TAG, "temperature is " + number);
+//                Log.e(TAG, "temperature is " + number);
+            }else if(bundle.containsKey(Constant.BROADCAST_AWS_GUESTRUE)){
+                String number = bundle.getString(Constant.BROADCAST_AWS_GUESTRUE);
+                ((MainFragment)fragmentColection.get(0)).updateGeasture(number);
+                Log.e(TAG, "geasture is " + number);
             }
         }
     };

@@ -25,11 +25,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -49,11 +45,18 @@ import com.amazonaws.services.iot.model.AttachPrincipalPolicyRequest;
 import com.amazonaws.services.iot.model.CreateKeysAndCertificateRequest;
 import com.amazonaws.services.iot.model.CreateKeysAndCertificateResult;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import itu.edu.embeddedlab.swiftforestjava.Classifier;
+import itu.edu.embeddedlab.swiftforestjava.DataSeriseProcesser;
+import itu.edu.embeddedlab.swiftforestjava.Instance;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a
@@ -87,6 +90,7 @@ public class BluetoothLeService extends Service {
     public final static UUID SERVICE_UUID = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 
     private int pushCount = 1;
+    private List<List<Long>> acceleratorData;
 
 //    private BluetoothGattCharacteristic mCharacteristic;
     private List<BluetoothGattCharacteristic> mCharacteristic = new ArrayList<BluetoothGattCharacteristic>();
@@ -125,9 +129,6 @@ public class BluetoothLeService extends Service {
     String certificateId;
 
     CognitoCachingCredentialsProvider credentialsProvider;
-
-    String filePath = "";
-    boolean isGonnaWrite = false;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -271,23 +272,43 @@ public class BluetoothLeService extends Service {
             String[] attrs = new String[]{"accx", "accy", "accz"};
             if (SensorDataParser.accelerometerHasChanged(maskField) ) {
                 SensorDataParser.getAccelorometerData(value, offset, accData);
+                List<Long> data = new ArrayList<Long>();
+                data.add((long)accData[0]);
+                data.add((long)accData[1]);
+                data.add((long)accData[2]);
+                data.add(System.currentTimeMillis());
+                acceleratorData.add(data);
+                if(acceleratorData.size() == 80){
+                    //send the accelerator data to analysis the status
+                    Log.e(TAG, "start to analysis data");
+                    InputStream inputStream = null;
+                    try {
+                        Instance features= DataSeriseProcesser.convertXYZtoInstance(acceleratorData);
+                        inputStream = getResources().getAssets().open("savedForest.out");
+                        ObjectInputStream in = new ObjectInputStream(inputStream);
+                        Classifier forest=(Classifier)in.readObject();
+                        Object resulttype = forest.classify(features);
+                        Log.e(TAG, "the gesture type is " + resulttype.toString());
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constant.BROADCAST_AWS_GUESTRUE, resulttype.toString());
+                        updateUIStatus(bundle);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }finally {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    acceleratorData.clear();
+                }
 //                Log.e(TAG, "x = " + accData[0] + " y = " + accData[1] + " z = " + accData[2] + " time " + System.currentTimeMillis());
 //                    publish(attrs,accData);
             }
         }
-
-//        int value;
-//        final int flags = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-//        if ((flags & 0x01) > 0) {
-//            value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 1);
-//        } else {
-//            value = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
-//        }
-
-//        Log.e(TAG, "we receive the value of " + value);
-     //   publish(value);
-        //This will send callback to the Activity when new value is received from HR device
-//        mCallbacks.onSampleValueReceived(value);
     }
 
 
@@ -520,6 +541,8 @@ public class BluetoothLeService extends Service {
         } catch (Exception e) {
             Log.e(TAG, "Subscription error.", e);
         }
+
+        acceleratorData = new ArrayList<List<Long>>();
 
     }
 
