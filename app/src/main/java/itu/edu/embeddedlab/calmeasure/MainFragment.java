@@ -1,6 +1,7 @@
 package itu.edu.embeddedlab.calmeasure;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Criteria;
@@ -8,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -26,9 +28,15 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.vision.text.Text;
 
 import android.Manifest;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import itu.edu.embeddedlab.calorieCaculation.CalorieCaculation;
 
 
 /**
@@ -57,6 +65,12 @@ public class MainFragment extends Fragment implements LocationListener {
     private int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private TextView humidityTextView;
     private TextView temperatureTextView;
+    private TextView totalCalorieTextView;
+    private TextView caloriePassTimeTextView;
+    private View startCalorieCountButton;
+    private View resetCalorieCountButton;
+    private View stopCalorieCountButton;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -91,11 +105,12 @@ public class MainFragment extends Fragment implements LocationListener {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_main, container, false);
+        View v = inflater.inflate(R.layout.fragment_main_v2, container, false);
         mMapView = (MapView) v.findViewById(R.id.fragment_main_mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();// needed to get the map to display immediately
@@ -119,11 +134,53 @@ public class MainFragment extends Fragment implements LocationListener {
         //set animation
         speedImageView = (ImageView) v.findViewById(R.id.main_fragment_speed_icon);
         speedImageView.setBackgroundColor(0xFFFFFF);
-        speedImageView.setBackgroundResource(R.drawable.main_fragment_running_animation);
+        speedImageView.setBackgroundResource(R.drawable.main_fragment_standing);
 
         //textview to be updated
         humidityTextView = (TextView)v.findViewById(R.id.main_fragment_humidity_text);
         temperatureTextView = (TextView)v.findViewById(R.id.main_fragment_temperature_text);
+
+        //caculate calorie
+        totalCalorieTextView = (TextView)v.findViewById(R.id.main_fragment_calories_count);
+        caloriePassTimeTextView = (TextView)v.findViewById(R.id.main_activity_colaries_time);
+        startCalorieCountButton = (RelativeLayout)v.findViewById(R.id.main_fragment_start_count_calorie);
+        resetCalorieCountButton = (RelativeLayout)v.findViewById(R.id.main_fragment_rest_count_calorie);
+        stopCalorieCountButton = (RelativeLayout)v.findViewById(R.id.main_fragment_stop_count_calorie);
+        startCalorieCountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "activity send out start count");
+                Intent broadcast = new Intent(Constant.ACTIVITY_NOTIFY_SERVICE);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.ACTIVITY_NOTIFY_START_COUNT, "");
+                broadcast.putExtras(bundle);
+                getActivity().sendBroadcast(broadcast);
+            }
+        });
+        resetCalorieCountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent broadcast = new Intent(Constant.ACTIVITY_NOTIFY_SERVICE);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.ACTIVITY_NOTIFY_RESET_COUNT, "");
+                broadcast.putExtras(bundle);
+                getActivity().sendBroadcast(broadcast);
+                updatetotalCalorieTextView("0");
+                updatecaloriePassTimeTextView("00 : 00 : 00");
+            }
+        });
+
+        stopCalorieCountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent broadcast = new Intent(Constant.ACTIVITY_NOTIFY_SERVICE);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.ACTIVITY_NOTIFY_STOP_COUNT, "");
+                broadcast.putExtras(bundle);
+                getActivity().sendBroadcast(broadcast);
+            }
+        });
+
         return v;
     }
 
@@ -267,7 +324,7 @@ public class MainFragment extends Fragment implements LocationListener {
             if(speedAnimationDrawble != null)
                 speedAnimationDrawble.stop();
             speedImageView.setBackgroundColor(0xFFFFFF);
-            speedImageView.setBackgroundResource(R.drawable.main_fragment_sitting);
+            speedImageView.setBackgroundResource(R.drawable.main_fragment_standing);
         }else if(status.equals("walking")){
             speedImageView.setBackgroundColor(0xFFFFFF);
             speedImageView.setBackgroundResource(R.drawable.main_fragment_walking_animation);
@@ -279,5 +336,13 @@ public class MainFragment extends Fragment implements LocationListener {
             speedAnimationDrawble = (AnimationDrawable) speedImageView.getBackground();
             speedAnimationDrawble.start();
         }
+    }
+
+    public void updatetotalCalorieTextView(String number){
+        totalCalorieTextView.setText(number);
+    }
+
+    public void updatecaloriePassTimeTextView(String number){
+        caloriePassTimeTextView.setText(number);
     }
 }

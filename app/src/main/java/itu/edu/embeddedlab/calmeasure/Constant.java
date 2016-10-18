@@ -14,4 +14,13 @@ public class Constant {
     public static final String BROADCAST_AWS_TEMPERATURE = "itu.edu.embeddedlab.calmeasure.UPDATE_TEMPERATRUE";
     public static final String BROADCAST_AWS_HUMIDITY = "itu.edu.embeddedlab.calmeasure.UPDATE_HUMIDITY";
     public static final String BROADCAST_AWS_GUESTRUE = "itu.edu.embeddedlab.calmeasure.gesutrue";
+    public static final String BROADCAST_CALORIE_TOTAL_COUNT = "itu.edu.embeddedlab.calmeasure.BROADCAST_CALORIE_TOTAL_COUNT";
+    public static final String BROADCAST_CALORIE_TIME_CONSUME = "itu.edu.embeddedlab.calmeasure.BROADCAST_CALORIE_TIME_CONSUME";
+    public static final String ACTIVITY_NOTIFY_SERVICE = "itu.edu.embeddedlab.calmeasure.ACTIVITY_NOTIFY_SERVICE";
+    public static final String ACTIVITY_NOTIFY_START_COUNT = "itu.edu.embeddedlab.calmeasure.ACTIVITY_NOTIFY_START_COUNT";
+    public static final String ACTIVITY_NOTIFY_RESET_COUNT = "itu.edu.embeddedlab.calmeasure.ACTIVITY_NOTIFY_RESET_COUNT";
+    public static final String ACTIVITY_NOTIFY_STOP_COUNT = "itu.edu.embeddedlab.calmeasure.ACTIVITY_NOTIFY_STOP_COUNT";
+    public static final int SUBPOSTURE_CROUCHING = 1;
+    public static final int SUBPOSTURE_SEATED = 2;
+    public static final int SUBPOSTURE_STANDING = 3;
 }

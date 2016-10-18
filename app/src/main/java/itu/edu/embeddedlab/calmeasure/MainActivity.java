@@ -15,8 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import itu.edu.embeddedlab.calorieCaculation.CalorieCaculation;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener, MedalsFragment.OnFragmentInteractionListener,
     SettingFragment.OnFragmentInteractionListener, PresentationFragment.OnFragmentInteractionListener{
@@ -109,6 +112,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                 String number = bundle.getString(Constant.BROADCAST_AWS_GUESTRUE);
                 ((MainFragment)fragmentColection.get(0)).updateGeasture(number);
                 Log.e(TAG, "geasture is " + number);
+            }else if(bundle.containsKey(Constant.BROADCAST_CALORIE_TOTAL_COUNT)){
+                double number = bundle.getDouble(Constant.BROADCAST_CALORIE_TOTAL_COUNT);
+                ((MainFragment)fragmentColection.get(0)).updatetotalCalorieTextView((double)((int)(number * 100)) / 100  + "");
+                String time = bundle.getString(Constant.BROADCAST_CALORIE_TIME_CONSUME);
+                Log.e(TAG, "activity receive time of " + time);
+                ((MainFragment)fragmentColection.get(0)).updatecaloriePassTimeTextView(time);
             }
         }
     };

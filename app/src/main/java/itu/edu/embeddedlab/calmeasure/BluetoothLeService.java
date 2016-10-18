@@ -25,7 +25,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -54,6 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import itu.edu.embeddedlab.calorieCaculation.CalorieCaculation;
 import itu.edu.embeddedlab.swiftforestjava.Classifier;
 import itu.edu.embeddedlab.swiftforestjava.DataSeriseProcesser;
 import itu.edu.embeddedlab.swiftforestjava.Instance;
@@ -130,6 +135,16 @@ public class BluetoothLeService extends Service {
 
     CognitoCachingCredentialsProvider credentialsProvider;
 
+    //count calorie
+    private CalorieCaculation.Builder calorieBuilder;
+    private CalorieCaculation calorieCaculation;
+    private double totalCalorie;
+    private int calorieCountPassTime;
+    private boolean isCounting = false;
+
+    //gesture regonize
+    private Object resulttype;
+
     private final IBinder mBinder = new LocalBinder();
 
     @Override
@@ -161,6 +176,7 @@ public class BluetoothLeService extends Service {
         mDeviceName = device.getName();
         Log.e(TAG, "we get the device name in the service the name is " + mDeviceName);
 
+        initCaculation();
         connect(device);
 
         return 3;
@@ -287,7 +303,7 @@ public class BluetoothLeService extends Service {
                         inputStream = getResources().getAssets().open("savedForest.out");
                         ObjectInputStream in = new ObjectInputStream(inputStream);
                         Classifier forest=(Classifier)in.readObject();
-                        Object resulttype = forest.classify(features);
+                        resulttype = forest.classify(features);
                         Log.e(TAG, "the gesture type is " + resulttype.toString());
                         Bundle bundle = new Bundle();
                         bundle.putString(Constant.BROADCAST_AWS_GUESTRUE, resulttype.toString());
@@ -496,6 +512,8 @@ public class BluetoothLeService extends Service {
 
         mqttTryConnect();
 
+        Log.e(TAG, "name " + region.getName() + " domain " + region.getDomain());
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -543,7 +561,7 @@ public class BluetoothLeService extends Service {
         }
 
         acceleratorData = new ArrayList<List<Long>>();
-
+        registerReceiver(mBroadcastReceiver, makeIntentFilter());
     }
 
     public void mqttTryConnect(){
@@ -612,5 +630,87 @@ public class BluetoothLeService extends Service {
         final Intent broadcast = new Intent(Constant.SERVICE_UPDATE_VIEW);
         broadcast.putExtras(args);
         sendBroadcast(broadcast);
+    }
+
+    private void initCaculation(){
+        calorieBuilder = new CalorieCaculation.Builder();
+        calorieCaculation = calorieBuilder.setSubPosture(Constant.SUBPOSTURE_STANDING).setTsk(34.1).setTsk0(34.1)
+                .setTa(40).setTr(40).setPa(2.5).setVa(0.3).setWalksp(0).setIcl(0.5).setAp(0.54).setFr(0.42).setTheta(0).setDefdir(true)
+                .setDefspeed(true).setSwpMeasured(700).setSwp0Measured(699).setWeight(75).setHeight(1.8).setTre(36.8).setSwp(0).setTcreq(36.8)
+                .setTsktcrwg(0.3).setMet(150).build();
+    }
+
+    private static IntentFilter makeIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.ACTIVITY_NOTIFY_SERVICE);
+        return intentFilter;
+    }
+
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            final String action = intent.getAction();
+            Bundle bundle = intent.getExtras();
+            if(bundle.containsKey(Constant.ACTIVITY_NOTIFY_START_COUNT)){
+                if(!isCounting) {
+                    isCounting = true;
+                    Log.e(TAG, "service receive start count command");
+                    //todo init a new thread here
+                    new Thread(new CaculateCalorie()).start();
+                }
+            }else if(bundle.containsKey(Constant.ACTIVITY_NOTIFY_RESET_COUNT)){
+                totalCalorie = 0d;
+                calorieCountPassTime = 0;
+            }else{
+                isCounting = false;
+            }
+        }
+    };
+
+    private class CaculateCalorie implements Runnable{
+
+        @Override
+        public void run() {
+            Log.e("CaculateCalorie thread", "start to count");
+            while(isCounting){
+                try {
+                    Thread.sleep(1000);
+                    if(resulttype != null && resulttype.toString().equals("sitting")){
+                        calorieBuilder.setSubPosture(Constant.SUBPOSTURE_CROUCHING);
+                    }else if(resulttype != null && resulttype.toString().equals("walking")){
+                        calorieBuilder.setSubPosture(Constant.SUBPOSTURE_SEATED);
+                    }else if(resulttype != null && resulttype.toString().equals("running")){
+                        calorieBuilder.setSubPosture(Constant.SUBPOSTURE_STANDING);
+                    }
+                    calorieBuilder.updateAll();
+                    totalCalorie += calorieCaculation.getCaloire();
+                    Intent broadcast = new Intent(Constant.SERVICE_UPDATE_VIEW);
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble(Constant.BROADCAST_CALORIE_TOTAL_COUNT, totalCalorie);
+
+                    //deal with time format
+                    calorieCountPassTime ++;
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(calorieCountPassTime / (60 * 60) % 24);
+                    sb.append(" : ");
+                    sb.append(calorieCountPassTime % (60 * 60) / 60 );
+                    sb.append(" : ");
+                    sb.append(calorieCountPassTime % 60);
+                    Log.e("CaculateCalorie thread", "start to send time" + sb.toString());
+                    bundle.putString(Constant.BROADCAST_CALORIE_TIME_CONSUME, sb.toString());
+                    broadcast.putExtras(bundle);
+                    sendBroadcast(broadcast);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mBroadcastReceiver);
     }
 }
